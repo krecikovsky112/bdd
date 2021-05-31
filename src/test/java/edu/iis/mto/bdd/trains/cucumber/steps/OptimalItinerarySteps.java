@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.iis.mto.bdd.trains.model.Line;
 import edu.iis.mto.bdd.trains.services.InMemoryTimetableService;
+import edu.iis.mto.bdd.trains.services.IntineraryService;
 import edu.iis.mto.bdd.trains.services.TimetableService;
 import org.hamcrest.Matchers;
 import org.joda.time.LocalTime;
@@ -17,8 +18,8 @@ import cucumber.api.java.en.When;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class OptimalItinerarySteps {
-    private Line line;
-    private String destination;
+    private IntineraryService intineraryService;
+    private List<LocalTime> arrivalTimes;
 
 
     @Given("^pociągi linii \"(.*)\" z \"(.*)\" odjeżdżają ze stacji \"(.*)\" do \"(.*)\" o$")
@@ -30,14 +31,11 @@ public class OptimalItinerarySteps {
 
     @When("^chcę podróżować z \"([^\"]*)\" do \"([^\"]*)\" o (.*)$")
     public void whenIWantToTravel(String departure, String destination, @Transform(JodaLocalTimeConverter.class) LocalTime startTime) {
-        throw new PendingException();
+        this.arrivalTimes = intineraryService.findNextDepartures(departure, destination, startTime);
     }
 
     @Then("^powinienem uzyskać informację o pociągach o:$")
     public void shouldBeInformedAbout(@Transform(JodaLocalTimeConverter.class) List<LocalTime> expectedTrainTimes) {
-        TimetableService timetableService = new InMemoryTimetableService();
-        List<LocalTime> arrivalTimes = timetableService.findArrivalTimes(line, destination);
-
         assertThat(arrivalTimes, Matchers.is(expectedTrainTimes));
     }
 }
