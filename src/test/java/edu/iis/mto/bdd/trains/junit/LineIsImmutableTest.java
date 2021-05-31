@@ -1,7 +1,7 @@
 package edu.iis.mto.bdd.trains.junit;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Arrays;
 
@@ -18,18 +18,21 @@ public class LineIsImmutableTest {
 
     @Before
     public void setUp() throws Exception {
-        sampleLine = Line.named("favouriteLine").departingFrom("station 0").withStations(inputStations);
+        sampleLine = Line.named("favouriteLine")
+                         .departingFrom("station 0")
+                         .withStations(inputStations);
     }
 
     @Test
     public void stationsCanNotBeModifiedAfterLineCreation() throws Exception {
         inputStations[0] = "station 99";
 
-        assertThat(sampleLine.getStations(), is(Arrays.asList(inputStationsCopy)));
+        assertThat(sampleLine.getStations(), equalTo(Arrays.asList(inputStationsCopy)));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void returnedLineStationCanNotBeModified() throws Exception {
-        sampleLine.getStations().add("station 99");
+        sampleLine.getStations()
+                  .add("station 99");
     }
 }
